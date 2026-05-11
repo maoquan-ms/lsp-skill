@@ -4,8 +4,8 @@ set -euo pipefail
 
 # Update release date
 # ---------- Configuration ----------
-JDTLS_VERSION_LATEST=`curl -Ls 'http://download.eclipse.org/jdtls/snapshots/latest.txt'`
-DOWNLOAD_URL="http://download.eclipse.org/jdtls/snapshots/$JDTLS_VERSION_LATEST"
+JDTLS_VERSION_LATEST=$(curl -Ls 'https://download.eclipse.org/jdtls/snapshots/latest.txt')
+DOWNLOAD_URL="https://download.eclipse.org/jdtls/snapshots/$JDTLS_VERSION_LATEST"
 INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/share/jdtls}"
 BIN_DIR="${BIN_DIR:-$HOME/.local/bin}"
 
@@ -31,12 +31,17 @@ info "Detected Java version: $JAVA_VER"
 
 # ---------- Download & Install ----------
 if [ -d "$INSTALL_DIR" ]; then
-  warn "Install directory already exists: $INSTALL_DIR"
-  read -rp "Remove and reinstall? [y/N] " ans
-  case "$ans" in
-    [yY]*) rm -rf "$INSTALL_DIR" ;;
-    *)     info "Aborted."; exit 0 ;;
-  esac
+  if [ "${FORCE_REINSTALL:-0}" = "1" ]; then
+    info "Force reinstall: removing $INSTALL_DIR"
+    rm -rf "$INSTALL_DIR"
+  else
+    warn "Install directory already exists: $INSTALL_DIR"
+    read -rp "Remove and reinstall? [y/N] " ans
+    case "$ans" in
+      [yY]*) rm -rf "$INSTALL_DIR" ;;
+      *)     info "Aborted."; exit 0 ;;
+    esac
+  fi
 fi
 
 mkdir -p "$INSTALL_DIR"
