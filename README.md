@@ -6,6 +6,8 @@
 - [gson](https://github.com/google/gson)
 
 ```copilot
+config lsp tool first
+
 check if the lsp tool is working
 
 how JsonWriter is defined
