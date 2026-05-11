@@ -125,3 +125,25 @@ After configuration, verify the LSP server is working:
 | LSP not indexing | Large Maven/Gradle projects may take 60–90s on first load |
 | Cross-module resolution fails | Run `mvn install` or `gradle build` to resolve dependencies |
 | Config not picked up | Run `/lsp reload` or restart Copilot CLI |
+| Plugins directory missing | See [Plugins Directory Missing](#plugins-directory-missing) below |
+| Server initialize timed out + exit code 1 | Usually means jdtls installation is corrupted; reinstall with `FORCE_REINSTALL=1` |
+
+### Plugins Directory Missing
+
+The jdtls binary (`~/.local/bin/jdtls`) exists but its plugins directory (`~/.local/share/jdtls/plugins`) is missing or corrupted. This can happen after partial installs, interrupted downloads, or manual cleanup.
+
+**Diagnosis**:
+```bash
+# Check if jdtls binary exists
+which jdtls
+
+# Check if plugins directory exists
+ls ~/.local/share/jdtls/plugins/
+```
+
+**Fix**: Force reinstall jdtls to restore the plugins directory:
+```bash
+FORCE_REINSTALL=1 bash scripts/install-java-lsp.sh
+```
+
+This removes `~/.local/share/jdtls` entirely and re-downloads + extracts the full jdtls distribution, restoring the plugins directory.
