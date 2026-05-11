@@ -63,7 +63,9 @@ cat > ".github/lsp.json" << 'LSP_EOF'
       "args": [],
       "fileExtensions": {
         ".java": "java"
-      }
+      },
+      "initializationTimeoutMs": 180000,
+      "requestTimeoutMs": 120000
     }
   }
 }
