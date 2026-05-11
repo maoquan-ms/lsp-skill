@@ -13,7 +13,7 @@ Before using LSP operations, ensure:
 2. **LSP is configured** — Either `~/.copilot/lsp-config.json` (user-level) or `.github/lsp.json` (repo-level) must exist with the Java server entry.
 3. **Java 17+** is available on PATH.
 
-> **First-time startup**: jdtls may take 30–90 seconds to index a project (especially large Maven/Gradle projects). LSP operations may return incomplete results during this window.
+> **First-time startup**: jdtls may take 30–300+ seconds to index a project (especially large Maven/Gradle projects). **For large projects, run `python3 scripts/wait-for-lsp-ready.py --project-dir <path>` (from the `configure-lsp-server` skill) before using LSP tools.** This warms the cache and confirms indexing is complete. LSP operations will return incomplete results during indexing.
 
 
 ## Core Rules
@@ -79,7 +79,7 @@ If LSP is not available or returns errors:
 1. **Check LSP status**: Use `/lsp` command in interactive mode
 2. **Check configuration**: Verify `~/.copilot/lsp-config.json` or `.github/lsp.json` exists
 3. **Check jdtls**: Run `which jdtls` and `java -version`
-4. **Wait for indexing**: Large projects may take 60–90s on first load
+4. **Wait for indexing**: Run `python3 scripts/wait-for-lsp-ready.py -p .` to check/warm indexing. Large projects may take 60–300s on first load
 5. **Fall back to text search**: Use `grep` with Java-aware patterns as a last resort:
    - `grep -rn "class ClassName"` for class definitions
    - `grep -rn "void methodName"` for method definitions

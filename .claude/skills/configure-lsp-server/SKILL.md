@@ -107,6 +107,39 @@ For a monorepo where Java code lives in a subdirectory:
 }
 ```
 
+## Waiting for LSP Indexing (Large Projects)
+
+jdtls can take 60–300+ seconds to index large Java/Maven/Gradle projects on first load. During indexing, LSP queries return incomplete or empty results. **Always run the readiness check before using LSP tools on large projects.**
+
+### Readiness Check Script
+
+```bash
+python3 scripts/wait-for-lsp-ready.py --project-dir /path/to/java/project
+```
+
+Options:
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--project-dir`, `-p` | `.` | Path to the Java project root |
+| `--timeout`, `-t` | `300` | Max seconds to wait for indexing |
+| `--jdtls-cmd` | auto-detect | jdtls command (reads from lsp.json if available) |
+
+The script:
+1. Starts jdtls and sends LSP initialize/initialized
+2. Monitors `language/status` and `$/progress` notifications for indexing progress
+3. Reports progress to stdout (building, importing, indexing)
+4. Exits with **0** when indexing is complete, **1** on timeout or error
+5. Warms the jdtls workspace cache (`~/.cache/jdtls-workspace`), making subsequent LSP starts faster
+
+### When to Run
+
+- **First time** opening a large Java project (500+ source files, multi-module Maven/Gradle)
+- **After** cleaning the jdtls workspace cache (`rm -rf ~/.cache/jdtls-workspace`)
+- **After** major dependency changes (new modules, large POM changes)
+
+
+> **Note**: The script auto-detects the jdtls command from `.github/lsp.json` or `~/.copilot/lsp-config.json`. If neither exists, it falls back to `jdtls` on PATH.
+
 ## Verifying LSP Setup
 
 After configuration, verify the LSP server is working:
